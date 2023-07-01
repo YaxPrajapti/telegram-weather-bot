@@ -17,7 +17,7 @@ const LocalStrategy = require('passport-local');
 const mongoStore = require('connect-mongo')
 const mongoose = require('mongoose'); 
 // const mongo_url = process.env.MONGO_URI;
-const mongo_url = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/Bot"; 
+const mongo_url = "mongodb://127.0.0.1:27017/Bot"; 
 mongoose.connect(mongo_url)
     .then( () => {
         console.log('Connected to database ')
@@ -38,34 +38,7 @@ const ExpressError = require('./utils/ExpressError');
 const bot = createBot(process.env.TOKEN); 
 // const bot = new Telegraf(process.env.TOKEN);
 const api_key = process.env.API_KEY; 
-const PORT = process.env.PORT; 
- 
-
-const printData = async (chatId, data) => {
-    const {main, visibility, wind, name} = data;
-    return await bot.telegram.sendMessage(chatId ,`city: ${name}\ntemp: ${main.temp}\nhumidity: ${main.humidity}\nmax temp: ${main.temp_max}\nmin temp: ${main.temp_min}\nvisibility: ${visibility}\nwind speed: ${wind.speed}\nwind degree: ${wind.deg}`); 
-}
-
-//sends update msg to subscribers: 
-const sendupdates = async (api_key) => {
-  const users = await User.find({});
-  const subscribedUser = users.filter((user) => user.isSubscribed);
-  subscribedUser.forEach((user) => {
-    if (!subscribedUser.isBlocked) {
-      const subscribedCities = user.subscribedCity;
-      subscribedCities.forEach(async (city) => {
-        const data = await Weather.getWeatherData(city, api_key);
-        printData(user.userId, data.data);
-      });
-    }
-  });
-};
-
-console.log('started messages for all subscribers');
-cron.schedule('00 00 0-23 * * *', () => {
-    sendupdates(api_key);
-}); 
-
+const PORT = process.env.PORT;  
 
 const app = express(); 
 app.use(express.urlencoded({ extended: true }));
@@ -125,11 +98,32 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err })
 }); 
 
+const printData = async (chatId, data) => {
+    const {main, visibility, wind, name} = data;
+    return await bot.telegram.sendMessage(chatId ,`city: ${name}\ntemp: ${main.temp}\nhumidity: ${main.humidity}\nmax temp: ${main.temp_max}\nmin temp: ${main.temp_min}\nvisibility: ${visibility}\nwind speed: ${wind.speed}\nwind degree: ${wind.deg}`); 
+}
 
+//sends update msg to subscribers: 
+const sendupdates = async (api_key) => {
+  const users = await User.find({});
+  const subscribedUser = users.filter((user) => user.isSubscribed);
+  subscribedUser.forEach((user) => {
+    if (!subscribedUser.isBlocked) {
+      const subscribedCities = user.subscribedCity;
+      subscribedCities.forEach(async (city) => {
+        const data = await Weather.getWeatherData(city, api_key);
+        printData(user.userId, data.data);
+      });
+    }
+  });
+};
 
-app.listen(PORT, () => {
-    console.log(`server started on port: ${PORT}`); 
+console.log('started messages for all subscribers');
+cron.schedule('00 0-59 * * * *', () => {
+    sendupdates(api_key);
 }); 
+
+ 
 
 bot.start(async (ctx) => {
     try {
@@ -215,3 +209,8 @@ bot.catch(err => {
 })
 
 module.exports = bot; 
+
+
+app.listen(PORT, () => {
+    console.log(`server started on port: ${PORT}`); 
+});
