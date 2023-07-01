@@ -5,7 +5,7 @@ const passport = require('passport');
 
 router.route("/")
     .get((req, res) => {
-        res.render('home');  
+        res.render('home', {path: "/"});  
     })
 
 router.route('/register')
