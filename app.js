@@ -199,7 +199,7 @@ bot.command('weather',async (ctx) => {
 })
 
 bot.command('help', (ctx) => {
-    ctx.reply('The Bot Commands are as follows:\n\n/subscribe - Subscribe to bot\n/weather cityName - Get the current weather data\n/unsubscribe - Unsubscribe from bot');
+    ctx.reply('The Bot Commands are as follows:\n\n/subscribe cityName - Subscribe to bot\n/weather cityName - Get the current weather data\n/unsubscribe - Unsubscribe from bot');
 });
 
 bot.launch(); 
