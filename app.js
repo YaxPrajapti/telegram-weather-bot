@@ -14,9 +14,11 @@ const flash = require('connect-flash');
 const ejsMate = require('ejs-mate');
 const mongoSentize = require('express-mongo-sanitize'); 
 const LocalStrategy = require('passport-local'); 
+const mongoStore = require('connect-mongo')
 const mongoose = require('mongoose'); 
 // const mongo_url = process.env.MONGO_URI;
-mongoose.connect("mongodb://127.0.0.1:27017/Bot")
+const mongo_url = "mongodb://127.0.0.1:27017/Bot"; 
+mongoose.connect(mongo_url)
     .then( () => {
         console.log('Connected to database ')
     })
@@ -69,11 +71,20 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+const store = new mongoStore({
+    mongoUrl: mongo_url, 
+    touchAfter: 24 * 3600, 
+    secret: process.env.SECRET, 
+})
+store.on("error", (err) => {
+    console.log("Session error: ", e.message);
+})
 app.use(session({
     name: 'weatheX', 
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
+    store: store, 
     cookie: {
         httpOnly: true, 
         // secure: true, 
