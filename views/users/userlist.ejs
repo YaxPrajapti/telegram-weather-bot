@@ -1,42 +1,48 @@
 <% layout('layouts/boilerplate') %>
-    <% if(users.length == 0) {%>
+    <% if(users.length==0) {%>
         <h3>User list is empty</h3>
-    <% } %>
-    <% for(let user of users) {%>
-    <div class="col-6 offset-3">
-        <h3>All users</h3>
-        <div class="card">
-            <h5 class="card-header"><%= user.name %></h5>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">UserId: <%= user.userId %></li>
-                    <li class="list-group-item">Subscribed: <%= user.isSubscribed %></li>
-                    <% if(user.isSubscribed) {%>
-                    <li class="list-group-item">Subscribed cities: 
-                        <% for(let city of user.subscribedCity) {%>
-                            <%= city %>, 
-                        <% } %>
-                    </li>
-                    <% } %>
-                    <li class="list-group-item ">Blocked: <%= user.isBlocked %> 
-                    <form action="/users/<%= user.userId %>?_method=PUT" method="POST" class="float-end">
-                        <button class="btn btn-info btn-sm">
-                            <% if(user.isBlocked) {%>
-                                Unblock
-                            <% } else {%>
-                                Block
-                            <% } %>
-                        </button>
-                    </form>
-                    </li>
-                  </ul>
-                <div class="card-footer">
-                    <form action="/users/<%= user.userId %>?_method=DELETE"
-                        method="POST">
-                        <button class="btn btn-danger">Delete User</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
         <% } %>
+            <div class="col-6 offset-3">
+                <h3>All users</h3>
+                <% for(let user of users) {%>
+                    <div class="mb-3">
+                        <div class="card">
+                            <h5 class="card-header">
+                                <%= user.name %>
+                            </h5>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">UserId: <%= user.userId %>
+                                    </li>
+                                    <li class="list-group-item">Subscribed: <%= user.isSubscribed %>
+                                    </li>
+                                    <% if(user.isSubscribed) {%>
+                                        <li class="list-group-item">Subscribed cities:
+                                            <% for(let city of user.subscribedCity) {%>
+                                                <%= city %>,
+                                                    <% } %>
+                                        </li>
+                                        <% } %>
+                                            <li class="list-group-item ">Blocked: <%= user.isBlocked %>
+                                                    <form action="/users/<%= user.userId %>?_method=PUT" method="POST"
+                                                        class="float-end">
+                                                        <button class="btn btn-info btn-sm">
+                                                            <% if(user.isBlocked) {%>
+                                                                Unblock
+                                                                <% } else {%>
+                                                                    Block
+                                                                    <% } %>
+                                                        </button>
+                                                    </form>
+                                            </li>
+                                </ul>
+                                <div class="card-footer">
+                                    <form action="/users/<%= user.userId %>?_method=DELETE" method="POST">
+                                        <button class="btn btn-danger">Delete User</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>

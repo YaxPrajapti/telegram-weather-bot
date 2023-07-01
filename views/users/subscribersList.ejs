@@ -1,49 +1,58 @@
 <% layout('layouts/boilerplate') %>
-<% if(subscribers.length == 0) {%>
-    <h3>subscriber list is empty</h3>
-<% } %>
-<% for(let user of subscribers) {%>
-    <div class="col-6 offset-3">
-        <h3>Subscribers</h3>
-        <div class="card">
-            <h5 class="card-header"><%= user.name %></h5>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">UserId: <%= user.userId %></li>
-                    <li class="list-group-item">Subscribed: <%= user.isSubscribed %></li>
-                    <% if(user.isSubscribed) {%>
-                    <li class="list-group-item">Subscribed cities: 
-                        <% for(let city of user.subscribedCity) {%>
-                            <%= city %>, 
-                        <% } %>
-                    </li>
-                    <% } %>
-                    <li class="list-group-item">Blocked: <%= user.isBlocked %>
-                        <form action="/users/<%= user.userId %>?_method=PUT" method="POST" class="float-end">
-                            <button class="btn btn-info btn-sm">
-                                <% if(user.isBlocked) {%>
-                                    Unblock
-                                <% } else {%>
-                                    Block
-                                <% } %>
-                            </button>
-                        </form></li>
-                    
-                  </ul>
-                <div class="card-footer">
-                    <div class="mb-3">
-                        <form action="/users/<%= user.userId %>?_method=DELETE"
-                            method="POST" class="col-auto">
-                            <button class="btn btn-danger">Delete User</button>
-                        </form>
-                    </div>
-                    <div class="mb-3">
-                        <form action="/users/subscribers/<%= user.userId %>?_method=PUT" method="POST" class="col-aut">
-                            <button class="btn btn-info">Unsbscribe this user</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <% if(subscribers.length==0) {%>
+        <h3>subscriber list is empty</h3>
         <% } %>
+            <div class="col-6 offset-3">
+                <h3>Subscribers</h3>
+                <% for(let user of subscribers) {%>
+                    <div class="mb-3">
+                        <div class="card">
+                            <h5 class="card-header">
+                                <%= user.name %>
+                            </h5>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">UserId: <%= user.userId %>
+                                    </li>
+                                    <li class="list-group-item">Subscribed: <%= user.isSubscribed %>
+                                    </li>
+                                    <% if(user.isSubscribed) {%>
+                                        <li class="list-group-item">Subscribed cities:
+                                            <% for(let city of user.subscribedCity) {%>
+                                                <%= city %>,
+                                                    <% } %>
+                                        </li>
+                                        <% } %>
+                                            <li class="list-group-item">Blocked: <%= user.isBlocked %>
+                                                    <form action="/users/<%= user.userId %>?_method=PUT" method="POST"
+                                                        class="float-end">
+                                                        <button class="btn btn-info btn-sm">
+                                                            <% if(user.isBlocked) {%>
+                                                                Unblock
+                                                                <% } else {%>
+                                                                    Block
+                                                                    <% } %>
+                                                        </button>
+                                                    </form>
+                                            </li>
+    
+                                </ul>
+                                <div class="card-footer">
+                                    <div class="mb-3">
+                                        <form action="/users/<%= user.userId %>?_method=DELETE" method="POST"
+                                            class="col-auto">
+                                            <button class="btn btn-danger">Delete User</button>
+                                        </form>
+                                    </div>
+                                    <div class="mb-3">
+                                        <form action="/users/subscribers/<%= user.userId %>?_method=PUT" method="POST"
+                                            class="col-aut">
+                                            <button class="btn btn-info">Unsbscribe this user</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
