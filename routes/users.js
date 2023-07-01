@@ -4,23 +4,32 @@ const router = express.Router();
 
 router.route('/')
     .get(async (req, res) => {
-        if(!req.isAuthenticated()){
-            req.flash('error', 'You must be signed in.'); 
-            return res.redirect('/login'); 
+        try {
+            if(!req.isAuthenticated()){
+                req.flash('error', 'You must be signed in.'); 
+                return res.redirect('/login'); 
+            }
+            const users = await User.find({});
+            res.render('users/userlist', { users, path: "/users" })
+        } catch (error) {
+            console.log(error);
         }
-        const users = await User.find({});
-        res.render('users/userlist', { users, path: "/users" })
     })
 
 router.route('/:id')
     .delete(async (req, res) => {
-        const {id} = req.params; 
+        try {
+            const {id} = req.params; 
         await User.findOneAndDelete({userId : id});
         console.log("User deleted successfully");
-        res.redirect('/users');  
+        res.redirect('/users');
+        } catch (error) {
+            console.log(error)
+        }  
     })
     .put(async (req, res) => {
-        const {id} = req.params; 
+        try {
+            const {id} = req.params; 
         const user = await User.findOne({userId: id}); 
         if(user.isBlocked){
             user.isBlocked = false; 
@@ -29,7 +38,10 @@ router.route('/:id')
         }
         await user.save(); 
         req.flash("User blocked is toggled."); 
-        res.redirect('/users'); 
+        res.redirect('/users');
+        } catch (error) {
+            console.log(error);
+        } 
     })
 
 router.route('/subscribers/:id')
@@ -53,12 +65,16 @@ router.route('/subscribers/:id')
 
 router.route('/subscribers')
 .get(async (req, res) => {
-    if(!req.isAuthenticated()){
-        req.flash('error', 'You must be signed in.'); 
-        return res.redirect('/login'); 
-    }
-    const subscribers = await User.find({isSubscribed: true}); 
-    res.render('users/subscribersList', {subscribers, path: "/users/subscribers"});  
+    try {
+        if(!req.isAuthenticated()){
+            req.flash('error', 'You must be signed in.'); 
+            return res.redirect('/login'); 
+        }
+        const subscribers = await User.find({isSubscribed: true}); 
+        res.render('users/subscribersList', {subscribers, path: "/users/subscribers"});
+    } catch (error) {
+        console.log(error); 
+    }  
 });
 
 
