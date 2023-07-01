@@ -119,7 +119,7 @@ const sendupdates = async (api_key) => {
 };
 
 console.log('started messages for all subscribers');
-cron.schedule('00 0-59 * * * *', () => {
+cron.schedule('00 */10 * * * *', () => {
     sendupdates(api_key);
 }); 
 
