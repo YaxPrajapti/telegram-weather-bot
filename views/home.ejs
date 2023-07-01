@@ -1,0 +1,22 @@
+<% layout('layouts/boilerplate') %>
+<div class="col-6 offset-3">
+    <% if(currentUser) {%>
+        <div class="col-6 offset-3">
+            <div class="card">
+                <div class="card-body">
+                    Welcome Admin, You can navigate to different pages through navigation bar. 
+                </div>
+              </div>
+        </div>
+    <% } else {%>
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">You are not authorized</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">Sign in or register</h6>
+              <p class="card-text">If you are already an admin go to sign in. Else register yourself first</p>
+              <a href="/login" class="card-link">Sign in</a>
+              <a href="/register" class="card-link">Register</a>
+            </div>
+          </div>
+    <% } %>
+</div>

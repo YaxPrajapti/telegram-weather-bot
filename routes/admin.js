@@ -3,9 +3,14 @@ const router = express.Router();
 const Admin = require('../models/admin'); 
 const passport = require('passport');
 
+router.route("/")
+    .get((req, res) => {
+        res.render('home');  
+    })
+
 router.route('/register')
     .get((req, res) => {
-        res.render('admin/register');
+        res.render('admin/register', {path: '/register'});
     })
     .post(async (req, res) => {
         try {
@@ -29,7 +34,7 @@ router.route('/register')
 
 router.route('/login')
     .get((req, res) => {
-        res.render('admin/login');
+        res.render('admin/login', {path: "/login"});
     })
     .post(passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }),async (req, res) => {
         req.flash('success', 'Welcom, Admin'); 

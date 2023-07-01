@@ -9,7 +9,7 @@ router.route('/')
             return res.redirect('/login'); 
         }
         const users = await User.find({});
-        res.render('users/userlist', { users })
+        res.render('users/userlist', { users, path: "/users" })
     })
 
 router.route('/:id')
@@ -25,8 +25,7 @@ router.route('/:id')
         if(user.isBlocked){
             user.isBlocked = false; 
         }else{
-            user.isBlocked = true; 
-            user.isSubscribed = false; 
+            user.isBlocked = true;   
         }
         await user.save(); 
         req.flash("User blocked is toggled."); 
@@ -54,8 +53,12 @@ router.route('/subscribers/:id')
 
 router.route('/subscribers')
 .get(async (req, res) => {
+    if(!req.isAuthenticated()){
+        req.flash('error', 'You must be signed in.'); 
+        return res.redirect('/login'); 
+    }
     const subscribers = await User.find({isSubscribed: true}); 
-    res.render('users/subscribersList', {subscribers});  
+    res.render('users/subscribersList', {subscribers, path: "/users/subscribers"});  
 });
 
 

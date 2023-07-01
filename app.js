@@ -16,7 +16,7 @@ const mongoSentize = require('express-mongo-sanitize');
 const LocalStrategy = require('passport-local'); 
 const mongoose = require('mongoose'); 
 // const mongo_url = process.env.MONGO_URI;
-dmongoose.connect("mongodb://127.0.0.1:27017/Bot")
+mongoose.connect("mongodb://127.0.0.1:27017/Bot")
     .then( () => {
         console.log('Connected to database ')
     })
@@ -83,12 +83,6 @@ app.use(session({
 })); 
 app.use(flash()); 
 app.use(mongoSentize());
-app.use((req, res, next) => {
-    res.locals.currentUser = req.user; 
-    res.locals.success = req.flash('success'); 
-    res.locals.error = req.flash('error'); 
-    next(); 
-});
 app.use(passport.initialize());
 app.use(passport.session()); 
 passport.use(new LocalStrategy(Admin.authenticate())); 
@@ -96,7 +90,12 @@ passport.use(new LocalStrategy(Admin.authenticate()));
 passport.serializeUser(Admin.serializeUser()); 
 passport.deserializeUser(Admin.deserializeUser()); 
 
-
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user;  
+    res.locals.success = req.flash('success'); 
+    res.locals.error = req.flash('error'); 
+    next(); 
+});
 
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs');
