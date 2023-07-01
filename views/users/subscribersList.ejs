@@ -21,10 +21,17 @@
                     <li class="list-group-item">Blocked: <%= user.isBlocked %></li>
                   </ul>
                 <div class="card-footer">
-                    <form action="/users/<%= user.userId %>?_method=DELETE"
-                        method="POST">
-                        <button class="btn btn-danger">Delete User</button>
-                    </form>
+                    <div class="mb-3">
+                        <form action="/users/<%= user.userId %>?_method=DELETE"
+                            method="POST" class="col-auto">
+                            <button class="btn btn-danger">Delete User</button>
+                        </form>
+                    </div>
+                    <div class="mb-3">
+                        <form action="/users/subscribers/<%= user.userId %>?_method=PUT" method="POST" class="col-aut">
+                            <button class="btn btn-info">Unsbscribe this user</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

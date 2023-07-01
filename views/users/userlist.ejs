@@ -18,7 +18,18 @@
                         <% } %>
                     </li>
                     <% } %>
-                    <li class="list-group-item">Blocked: <%= user.isBlocked %></li>
+                    <li class="list-group-item ">Blocked: <%= user.isBlocked %> 
+                    <form action="/users/<%= user.userId %>?_method=PUT" method="POST" class="float-end">
+                        <button class="btn btn-info btn-sm">
+                            <% if(user.isBlocked) {%>
+                                Unblock
+                            <% } else {%>
+                                Block
+                            <% } %>
+                        </button>
+                    </form>
+                    </form>
+                    </li>
                   </ul>
                 <div class="card-footer">
                     <form action="/users/<%= user.userId %>?_method=DELETE"

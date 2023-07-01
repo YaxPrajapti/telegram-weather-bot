@@ -1,21 +1,28 @@
-const express = require('express'); 
+// if(process.env.NODE_ENV !== "production"){
+//     const dotenv = require('dotenv'); 
+//     dotenv.config(); 
+// }
 const dotenv = require('dotenv'); 
-dotenv.config({path: './.env'}); 
+dotenv.config();
+const express = require('express'); 
 const cron = require('node-cron'); 
 const path = require('path');
 const methodOverride = require('method-override'); 
 const session = require('express-session'); 
 const passport = require('passport'); 
 const flash = require('connect-flash');
-const ejsMate = require('ejs-mate')
+const ejsMate = require('ejs-mate');
+const mongoSentize = require('express-mongo-sanitize'); 
 const LocalStrategy = require('passport-local'); 
 const mongoose = require('mongoose'); 
-mongoose.connect("mongodb://127.0.0.1:27017/Bot"); 
-const db = mongoose.connection; 
-db.on("error", console.error.bind(console, "Connection error"));
-db.once("open", () => {
-    console.log("Connection established with database"); 
-});
+// const mongo_url = process.env.MONGO_URI;
+dmongoose.connect("mongodb://127.0.0.1:27017/Bot")
+    .then( () => {
+        console.log('Connected to database ')
+    })
+    .catch( (err) => {
+        console.error(`Error connecting to the database. \n${err}`);
+    })
 
 const User = require('./models/user'); 
 const Weather = require('./utils/weatherdata'); 
@@ -30,6 +37,7 @@ const bot = createBot(process.env.TOKEN);
 // const bot = new Telegraf(process.env.TOKEN);
 const api_key = process.env.API_KEY; 
 const PORT = process.env.PORT; 
+ 
 
 const printData = async (chatId, data) => {
     const {main, visibility, wind, name} = data;
@@ -51,9 +59,9 @@ const sendupdates = async (api_key) => {
   });
 };
 
-cron.schedule('0 0-59 * * * *', () => {
+console.log('started messages for all subscribers');
+cron.schedule('00 00 0-23 * * *', () => {
     sendupdates(api_key);
-    console.log('started messages for all subscribers');
 }); 
 
 
@@ -62,19 +70,25 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
+    name: 'weatheX', 
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: {
+        httpOnly: true, 
+        // secure: true, 
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7, 
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    }
 })); 
 app.use(flash()); 
-
+app.use(mongoSentize());
 app.use((req, res, next) => {
     res.locals.currentUser = req.user; 
     res.locals.success = req.flash('success'); 
     res.locals.error = req.flash('error'); 
     next(); 
-})
-
+});
 app.use(passport.initialize());
 app.use(passport.session()); 
 passport.use(new LocalStrategy(Admin.authenticate())); 
@@ -112,19 +126,18 @@ bot.start(async (ctx) => {
         const userId = ctx.from.id;
         const username = ctx.from.first_name + " " + ctx.from.last_name;
         const user = await User.findOne({userId: userId}); 
-        if(user.isBlocked){
-            return ctx.reply("You are blocked from our seviece. \n contact the owner"); 
-        }
         if(!user){
             const newUser = new User({name: username, userId: userId}); 
             await newUser.save(); 
             console.log("User saved in database");
+        }else{
+            if(user.isBlocked){
+                return ctx.reply("You are blocked from our services. Please contact owner"); 
+            }
         }
         ctx.reply('Welcome to weatheX \n click /help to learn about available commands');
     } catch (err) {
         console.error(err);
-        ctx.reply(`city: ${city}\ntemp: ${main.temp}\nhumidity: ${main.humidity}\nmax temp: ${main.temp_max}\nmin temp: ${main.temp_min}\nvisibility: ${visibility}\nwind speed: ${wind.speed}\nwind degree: ${wind.deg}`); 
-
     }
 }); 
 

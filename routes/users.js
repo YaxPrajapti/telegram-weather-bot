@@ -19,16 +19,28 @@ router.route('/:id')
         console.log("User deleted successfully");
         res.redirect('/users');  
     })
+    .put(async (req, res) => {
+        const {id} = req.params; 
+        const user = await User.findOne({userId: id}); 
+        if(user.isBlocked){
+            user.isBlocked = false; 
+        }else{
+            user.isBlocked = true; 
+            user.isSubscribed = false; 
+        }
+        await user.save(); 
+        req.flash("User blocked is toggled."); 
+        res.redirect('/users'); 
+    })
 
 router.route('/subscribers/:id')
-    .delete(async (req, res) => {
+    .put(async (req, res) => {
         try {
             const { id } = req.params;
             const subscriber = await User.findOne({ userId: id, isSubscribed: true });
             if (!subscriber) {
                 return res.send("User not found");
             }
-            console.log(subscriber.subscribedCity.length)
             subscriber.isSubscribed = false;
             while (subscriber.subscribedCity.length) {
                 subscriber.subscribedCity.pop();
