@@ -17,7 +17,7 @@ const LocalStrategy = require('passport-local');
 const mongoStore = require('connect-mongo')
 const mongoose = require('mongoose'); 
 // const mongo_url = process.env.MONGO_URI;
-const mongo_url = "mongodb://127.0.0.1:27017/Bot"; 
+const mongo_url = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/Bot"; 
 mongoose.connect(mongo_url)
     .then( () => {
         console.log('Connected to database ')
