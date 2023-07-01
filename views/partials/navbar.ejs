@@ -7,13 +7,13 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="<%= path === '/users' ? 'nav-link active' : 'nav-link' %>" href="/users">Users</a>
-          <a class="<%= path === '/users/subscribers' ? 'nav-link active' : 'nav-link' %>" href="/users/subscribers">Subscribers</a>
+          <a class="nav-link" href="/users">Users</a>
+          <a class="nav-link" href="/users/subscribers">Subscribers</a>
         </div>
         <div class="navbar-nav ms-auto">
           <% if(!currentUser) {%>
-            <a href="/login" class="<%= path === '/login' ? 'nav-link active' : 'nav-link' %>">Login</a>
-            <a href="/register" class="<%= path === '/register' ? 'nav-link active' : 'nav-link' %>">Register</a>
+            <a href="/login" class="nav-link">Login</a>
+            <a href="/register" class="nav-link">Register</a>
             <% } else {%>
               <a href= "/logout" class="nav-link">Log out</a>
             <% } %>

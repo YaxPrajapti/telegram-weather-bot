@@ -22,7 +22,7 @@ router.route('/register')
                     return next(err);
                 }
                 req.flash('success', `welcome to weatherX ${registredAdmin.username}`); 
-                res.redirect('/users'); 
+                return res.redirect('/users'); 
             })
             req.flash('success', "welcome to weatherX ${registredAdmin.username}");
             res.redirect('/users');
